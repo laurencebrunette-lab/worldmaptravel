@@ -96,6 +96,46 @@ function estimateLegCosts(cityA, cityB) {
   return { distanceKm, costs };
 }
 
+// Manually verified routes (data/routeOverrides.js) take priority over the
+// generic distance formula: they know which modes actually exist for a
+// specific city pair, and use a real checked price instead of an estimate.
+function findRouteOverride(nameA, nameB) {
+  const overrides = typeof window !== "undefined" ? window.__ROUTE_OVERRIDES__ : null;
+  if (!overrides || !nameA || !nameB) return null;
+  const a = nameA.trim().toLowerCase();
+  const b = nameB.trim().toLowerCase();
+  return (
+    overrides.find((r) => {
+      const [x, y] = r.cities.map((c) => c.toLowerCase());
+      return (x === a && y === b) || (x === b && y === a);
+    }) || null
+  );
+}
+
+function getLegCosts(cityA, cityB) {
+  const distanceKm = haversineDistanceKm(cityA, cityB);
+  const override = findRouteOverride(cityA.name, cityB.name);
+
+  if (override) {
+    const costs = {};
+    for (const mode of Object.keys(MODES)) {
+      costs[mode] = mode in override.modes ? override.modes[mode] : null;
+    }
+    return {
+      distanceKm,
+      costs,
+      verifiedModes: Object.keys(override.modes),
+      note: override.note || null,
+    };
+  }
+
+  const costs = {};
+  for (const mode of Object.keys(MODES)) {
+    costs[mode] = estimateModeCost(mode, distanceKm);
+  }
+  return { distanceKm, costs, verifiedModes: [], note: null };
+}
+
 function cheapestAvailableMode(costs) {
   let best = null;
   for (const [mode, price] of Object.entries(costs)) {

@@ -21,6 +21,13 @@ ferry costs (in €) between each stop, adding them into a running trip total.
   distance too, same as the other modes — there's no data on which specific
   city pairs actually have a water crossing, so pick it manually when you
   know a route is a ferry route (e.g. island hops).
+- **Verified routes** (`data/routeOverrides.js`) override the distance
+  estimate entirely for specific city pairs you've manually checked against
+  a real booking site (e.g. 12Go, Rome2Rio). A verified route only shows the
+  modes that actually exist for it (with a green "✓ verified" badge and
+  their real price) — every other mode is hidden, instead of guessed from
+  distance. See that file for the format; add an entry any time you check a
+  real price and want the app to use it from then on.
 - **Countries are color-coded** with a vendored Natural Earth boundary
   dataset, and both **countries and major cities show a bilingual label**
   (English on top, local-language name below). Labels stay hidden by
@@ -58,7 +65,8 @@ js/worldLayers.js       # country choropleth + bilingual country/city labels
 js/app.js              # map setup, trip state, rendering
 data/countries-topo.js  # Natural Earth country boundaries (via world-atlas)
 data/countryNames.js    # English/native country names + colors (via world-countries)
-data/cities.js          # curated list of ~150 major cities, English + native names
+data/cities.js          # curated list of ~200 major cities, English + native names
+data/routeOverrides.js  # manually verified routes (real modes + real prices)
 vendor/                # vendored Leaflet + topojson-client + fonts (no CDN dependency)
 ```
 
@@ -89,6 +97,14 @@ vendor/                # vendored Leaflet + topojson-client + fonts (no CDN depe
   cities, not just capitals/largest cities), not every city on Earth —
   anywhere else can still be added by clicking the map directly or via the
   search box, which uses live geocoding instead.
+- **Distance alone can't tell you which modes actually exist.** The generic
+  estimate will happily show a "train" option under a distance cutoff even
+  where no railway exists (e.g. most of Cambodia), or a "ferry" between two
+  inland cities. This isn't a bug to tune away — it's the ceiling of a
+  distance-only model with no real routing/infrastructure data. The fix is
+  the verified-routes system above: check a route once, add it to
+  `data/routeOverrides.js`, and it's correct from then on. Unverified routes
+  can still show implausible modes; treat those as rough guesses, not fact.
 
 ## Extending with real fares
 

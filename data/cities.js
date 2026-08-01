@@ -196,6 +196,7 @@ window.__CITIES__ = [
   { name: "Phnom Penh", lat: 11.5564, lng: 104.9282, native: "ភ្នំពេញ", country: "KH", tier: 3 },
   { name: "Siem Reap", lat: 13.3633, lng: 103.8564, native: "សៀមរាប", country: "KH", tier: 2 },
   { name: "Sihanoukville", lat: 10.6104, lng: 103.5299, native: "ក្រុងព្រះសីហនុ", country: "KH", tier: 3 },
+  { name: "Kampot", lat: 10.6104, lng: 104.1817, native: "កំពត", country: "KH", tier: 3 },
   { name: "Vientiane", lat: 17.9757, lng: 102.6331, native: "ວຽງຈັນ", country: "LA", tier: 3 },
   { name: "Yangon", lat: 16.8661, lng: 96.1951, native: "ရန်ကုန်", country: "MM", tier: 3 },
   { name: "Kuala Lumpur", lat: 3.139, lng: 101.6869, country: "MY", tier: 2 },

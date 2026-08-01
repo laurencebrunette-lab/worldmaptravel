@@ -373,6 +373,20 @@ html, body {
   font-weight: 700;
 }
 
+.verified-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+  background: #dff5e8;
+  color: #1f9d5c;
+  font-size: 0.62rem;
+  font-weight: 700;
+  vertical-align: middle;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
 .mode-price {
   font-weight: 700;
   color: var(--text);

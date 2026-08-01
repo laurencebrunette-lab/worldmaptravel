@@ -115,11 +115,13 @@
       setTimeout(() => {
         const from = trip[legIndex];
         const to = trip[legIndex + 1];
-        const { distanceKm, costs } = estimateLegCosts(from, to);
+        const { distanceKm, costs, verifiedModes, note } = getLegCosts(from, to);
         legs[legIndex] = {
           status: "done",
           distanceKm,
           costs,
+          verifiedModes,
+          note,
           selectedMode: cheapestAvailableMode(costs),
         };
         renderAll();
@@ -135,8 +137,15 @@
     trip.splice(idx, 1);
     legs.length = 0;
     for (let i = 0; i < trip.length - 1; i++) {
-      const { distanceKm, costs } = estimateLegCosts(trip[i], trip[i + 1]);
-      legs.push({ status: "done", distanceKm, costs, selectedMode: cheapestAvailableMode(costs) });
+      const { distanceKm, costs, verifiedModes, note } = getLegCosts(trip[i], trip[i + 1]);
+      legs.push({
+        status: "done",
+        distanceKm,
+        costs,
+        verifiedModes,
+        note,
+        selectedMode: cheapestAvailableMode(costs),
+      });
     }
     renderAll();
   }
@@ -255,26 +264,32 @@
     }
 
     const distanceLabel = `${Math.round(leg.distanceKm).toLocaleString()} km`;
+    const verifiedModes = leg.verifiedModes || [];
     const modeRows = Object.keys(leg.costs)
       .map((mode) => {
         const price = leg.costs[mode];
         const cfg = MODES[mode];
         const available = price != null;
         const checked = leg.selectedMode === mode ? "checked" : "";
+        const isVerified = available && verifiedModes.includes(mode);
+        const verifiedBadge = isVerified ? `<span class="verified-badge" title="Price checked against a real booking site">✓ verified</span>` : "";
         return `
           <label class="mode-option mode-${mode} ${available ? "" : "unavailable"}">
             <input type="radio" name="leg-${index}-mode" value="${mode}" ${checked} ${available ? "" : "disabled"} />
             <span class="mode-icon">${cfg.icon}</span>
-            <span class="mode-label">${cfg.label}</span>
+            <span class="mode-label">${cfg.label}${verifiedBadge}</span>
             <span class="mode-price">${available ? price.toLocaleString() + " €" : "n/a"}</span>
           </label>
         `;
       })
       .join("");
 
+    const noteHtml = leg.note ? `<div class="leg-note">${escapeHtml(leg.note)}</div>` : "";
+
     wrapper.innerHTML = `
       <div class="leg-distance">${distanceLabel} between stops</div>
       <div class="mode-options">${modeRows}</div>
+      ${noteHtml}
     `;
 
     wrapper.querySelectorAll(`input[name="leg-${index}-mode"]`).forEach((input) => {
