@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>World Travel Cost Map</title>
+
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="app">
+    <header id="app-header">
+      <h1>🗺️ World Travel Cost Map</h1>
+      <p class="subtitle">Click cities on the map (or search) to build a trip. Estimated plane / train / bus / taxi costs are calculated for each leg and added to your running total.</p>
+    </header>
+
+    <div id="main">
+      <div id="map"></div>
+
+      <aside id="sidebar">
+        <div class="search-box">
+          <input type="text" id="city-search" placeholder="Search for a city…" autocomplete="off" />
+          <div id="search-results" class="search-results hidden"></div>
+        </div>
+
+        <div id="trip-summary">
+          <div class="trip-summary-row">
+            <span>Cities</span>
+            <strong id="city-count">0</strong>
+          </div>
+          <div class="trip-summary-row total">
+            <span>Estimated total</span>
+            <strong id="trip-total">$0</strong>
+          </div>
+          <button id="clear-trip" class="secondary-btn" disabled>Clear trip</button>
+        </div>
+
+        <div id="itinerary">
+          <p id="itinerary-empty" class="empty-hint">No cities yet. Click anywhere on the map to add your first city.</p>
+          <ol id="itinerary-list"></ol>
+        </div>
+
+        <div id="disclaimer">
+          <strong>Note:</strong> costs are rough estimates from a distance-based
+          model (no live fare data), meant for ballpark trip planning — not
+          bookable prices. Real fares vary a lot by season, carrier, and how
+          far ahead you book.
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script src="vendor/leaflet/leaflet.js"></script>
+  <script src="js/costModel.js"></script>
+  <script src="js/geocode.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
