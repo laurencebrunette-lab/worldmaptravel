@@ -18,6 +18,14 @@ costs between each stop, adding them into a running trip total.
   transport to count toward the trip total (the cheapest available mode is
   selected by default). A mode is only offered if the distance is within a
   plausible range for it (e.g. no taxi across 3,000 km).
+- **Countries are color-coded** with a vendored Natural Earth boundary
+  dataset, and both **countries and major cities show a bilingual label**
+  (English on top, local-language name below). Labels stay hidden by
+  default and fade in on hover, or permanently once you zoom in enough —
+  bigger countries/cities appear sooner — to keep the world view readable.
+  Clicking a city's dot/label adds it straight to the trip (no geocoding
+  round-trip needed); any other spot on the map still works via click +
+  reverse geocoding as before.
 
 ## Usage
 
@@ -39,12 +47,41 @@ python3 -m http.server 8000
 ## Project structure
 
 ```
-index.html        # layout: map + sidebar
-css/style.css      # styling
-js/geocode.js      # Nominatim search / reverse geocode helpers
-js/costModel.js     # distance calculation + per-mode cost estimation
-js/app.js          # map setup, trip state, rendering
+index.html            # layout: map + sidebar
+css/style.css          # styling
+js/geocode.js          # Nominatim search / reverse geocode helpers
+js/costModel.js        # distance calculation + per-mode cost estimation
+js/worldLayers.js       # country choropleth + bilingual country/city labels
+js/app.js              # map setup, trip state, rendering
+data/countries-topo.js  # Natural Earth country boundaries (via world-atlas)
+data/countryNames.js    # English/native country names + colors (via world-countries)
+data/cities.js          # curated list of ~150 major cities, English + native names
+vendor/                # vendored Leaflet + topojson-client (no CDN dependency)
 ```
+
+### Data sources & attribution
+
+- Country boundaries: [Natural Earth](https://www.naturalearthdata.com/)
+  (public domain), packaged as topojson by the
+  [`world-atlas`](https://github.com/topojson/world-atlas) project (ISC).
+- English/native country names: derived from the
+  [`world-countries`](https://github.com/mledoze/countries) dataset,
+  licensed under [ODbL](https://opendatacommons.org/licenses/odbl/) —
+  attribution included here per that license.
+- City list: hand-curated for this project.
+
+## Known limitations
+
+- Country fill colors are assigned by hashing each country's ISO code to a
+  hue — visually distinct in most cases, but not a true four-color-map
+  algorithm, so a couple of neighbors can occasionally land on similar
+  shades.
+- Labels don't do collision avoidance, so in a few dense clusters (e.g.
+  Western Europe, the Persian Gulf) a country and a city label can overlap
+  slightly at low zoom. Zooming in or hovering resolves it.
+- The city list is a curated ~150 major hubs, not every city on Earth —
+  anywhere else can still be added by clicking the map directly or via the
+  search box, which uses live geocoding instead.
 
 ## Extending with real fares
 

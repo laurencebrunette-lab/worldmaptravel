@@ -18,6 +18,14 @@
   const markerLayer = L.layerGroup().addTo(map);
   const lineLayer = L.layerGroup().addTo(map);
 
+  if (typeof initWorldLayers === "function") {
+    initWorldLayers(map, {
+      onCityClick: (city) => {
+        addCity({ name: city.name, native: city.native, lat: city.lat, lng: city.lng });
+      },
+    });
+  }
+
   map.on("click", async (e) => {
     if (pendingClickResolve) return;
     pendingClickResolve = true;
@@ -95,7 +103,7 @@
 
   // ---- trip mutation ------------------------------------------------------
   function addCity(place) {
-    const city = { id: nextId++, name: place.name, lat: place.lat, lng: place.lng };
+    const city = { id: nextId++, name: place.name, native: place.native || null, lat: place.lat, lng: place.lng };
     trip.push(city);
 
     if (trip.length > 1) {
@@ -172,8 +180,9 @@
         iconAnchor: [14, 14],
       });
       const marker = L.marker([city.lat, city.lng], { icon }).addTo(markerLayer);
+      const nativeLine = city.native ? `<br/><em>${escapeHtml(city.native)}</em>` : "";
       marker.bindPopup(
-        `<strong>${escapeHtml(city.name)}</strong><br/><a href="#" data-remove-id="${city.id}">Remove</a>`
+        `<strong>${escapeHtml(city.name)}</strong>${nativeLine}<br/><a href="#" data-remove-id="${city.id}">Remove</a>`
       );
       marker.on("popupopen", () => {
         const link = document.querySelector(`[data-remove-id="${city.id}"]`);
@@ -218,9 +227,12 @@
     trip.forEach((city, i) => {
       const li = document.createElement("li");
       li.className = "city-node";
+      const nativeSpan = city.native
+        ? `<span class="city-name-native">${escapeHtml(city.native)}</span>`
+        : "";
       li.innerHTML = `
         <span class="city-badge">${i + 1}</span>
-        <span class="city-name">${escapeHtml(city.name)}</span>
+        <span class="city-name">${escapeHtml(city.name)}${nativeSpan}</span>
         <button class="city-remove" title="Remove city">✕</button>
       `;
       li.querySelector(".city-remove").addEventListener("click", () => removeCity(city.id));

@@ -223,6 +223,14 @@ html, body {
   font-weight: 500;
 }
 
+.city-name-native {
+  display: block;
+  font-size: 0.74rem;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--text-dim);
+}
+
 .city-remove {
   background: none;
   border: none;
@@ -354,6 +362,110 @@ html, body {
   font-size: 0.8rem;
   border: 2px solid #061018;
   box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+}
+
+/* Country choropleth + bilingual country/city labels (js/worldLayers.js) */
+.geo-label-inner {
+  transform: translate(-50%, -50%);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.geo-label-country {
+  pointer-events: none;
+}
+
+.geo-label-country .label-en,
+.geo-label-country .label-native {
+  display: block;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95), 0 0 2px rgba(0, 0, 0, 0.95);
+}
+
+.geo-label-country .label-en {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+
+.geo-label-country .label-native {
+  font-size: 0.6rem;
+  font-style: italic;
+  color: #dfe7ee;
+  margin-top: 1px;
+}
+
+.geo-label-country.zoom-visible .label-en,
+.geo-label-country.hover-visible .label-en,
+.geo-label-country.zoom-visible .label-native,
+.geo-label-country.hover-visible .label-native {
+  opacity: 1;
+}
+
+.geo-label-city {
+  cursor: pointer;
+}
+
+/* The dot must sit exactly on the city's true coordinate, so it's
+   absolutely positioned at the (0,0) anchor rather than sharing a
+   flex box with the (variable-height) text below it. */
+.geo-label-city .geo-label-inner {
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+.geo-label-city .label-dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ffd166;
+  border: 1.5px solid #241a04;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.7);
+  transition: transform 0.15s ease;
+}
+
+.geo-label-city:hover .label-dot {
+  transform: translate(-50%, -50%) scale(1.35);
+}
+
+.geo-label-city .label-text {
+  position: absolute;
+  top: 6px;
+  left: 0;
+  transform: translate(-50%, 0);
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.geo-label-city.zoom-visible .label-text,
+.geo-label-city:hover .label-text {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.geo-label-city .label-en {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95), 0 0 2px rgba(0, 0, 0, 0.95);
+}
+
+.geo-label-city .label-native {
+  display: block;
+  font-size: 0.58rem;
+  font-style: italic;
+  color: #f0e6c8;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
 }
 
 @media (max-width: 820px) {
