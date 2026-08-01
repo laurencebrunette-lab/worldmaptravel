@@ -77,6 +77,31 @@ function initWorldLayers(map, { onCityClick }) {
     return null;
   }
 
+  // Countries whose polygons cross the antimeridian (e.g. Russia, Fiji) have
+  // rings that jump from ~180 to ~-180 longitude; rendered naively, Leaflet
+  // draws a straight line across the whole map at that latitude. Unwrap each
+  // ring so consecutive points never differ by more than 180deg.
+  function unwrapRing(ring) {
+    const out = [ring[0].slice()];
+    for (let i = 1; i < ring.length; i++) {
+      const prev = out[i - 1];
+      let lng = ring[i][0];
+      while (lng - prev[0] > 180) lng -= 360;
+      while (lng - prev[0] < -180) lng += 360;
+      out.push([lng, ring[i][1]]);
+    }
+    return out;
+  }
+
+  function unwrapGeometry(geometry) {
+    if (!geometry) return;
+    if (geometry.type === "Polygon") {
+      geometry.coordinates = geometry.coordinates.map(unwrapRing);
+    } else if (geometry.type === "MultiPolygon") {
+      geometry.coordinates = geometry.coordinates.map((poly) => poly.map(unwrapRing));
+    }
+  }
+
   function registerLabel(marker, minZoom) {
     geoLabels.push({ marker, minZoom });
   }
@@ -105,6 +130,7 @@ function initWorldLayers(map, { onCityClick }) {
     if (!topo || typeof topojson === "undefined") return;
 
     const geo = topojson.feature(topo, topo.objects.countries);
+    geo.features.forEach((f) => unwrapGeometry(f.geometry));
     const countryLabelMarkers = {};
 
     L.geoJSON(geo, {
@@ -112,11 +138,11 @@ function initWorldLayers(map, { onCityClick }) {
         const info = names[feature.id];
         const hue = info ? info.hue : hashHue(feature.properties.name || String(feature.id));
         return {
-          fillColor: hsl(hue, 55, 45),
-          color: hsl(hue, 45, 22),
-          weight: 1,
-          opacity: 0.75,
-          fillOpacity: 0.4,
+          fillColor: hsl(hue, 68, 62),
+          color: hsl(hue, 55, 38),
+          weight: 1.5,
+          opacity: 0.8,
+          fillOpacity: 0.38,
         };
       },
       onEachFeature: (feature, layer) => {
@@ -136,7 +162,7 @@ function initWorldLayers(map, { onCityClick }) {
         }
 
         layer.on("mouseover", () => {
-          layer.setStyle({ fillOpacity: 0.68 });
+          layer.setStyle({ fillOpacity: 0.52 });
           const el = countryLabelMarkers[feature.id] && countryLabelMarkers[feature.id].getElement();
           if (el) el.classList.add("hover-visible");
         });

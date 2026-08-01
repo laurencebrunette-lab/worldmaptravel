@@ -266,7 +266,7 @@
             <input type="radio" name="leg-${index}-mode" value="${mode}" ${checked} ${available ? "" : "disabled"} />
             <span class="mode-icon">${cfg.icon}</span>
             <span class="mode-label">${cfg.label}</span>
-            <span class="mode-price">${available ? "$" + price.toLocaleString() : "n/a"}</span>
+            <span class="mode-price">${available ? price.toLocaleString() + " €" : "n/a"}</span>
           </label>
         `;
       })
@@ -291,11 +291,11 @@
       }
       return sum;
     }, 0);
-    tripTotalEl.textContent = `$${total.toLocaleString()}`;
+    tripTotalEl.textContent = `${total.toLocaleString()} €`;
   }
 
   function modeColor(mode) {
-    return { plane: "#4fb0ff", train: "#35d49c", bus: "#ffb454", taxi: "#ff6b81" }[mode] || "#6b7c8f";
+    return { plane: "#4fb0ff", train: "#35d49c", bus: "#ffb454", taxi: "#ff6b81", ferry: "#9b8cf2" }[mode] || "#6b7c8f";
   }
 
   // ---- misc helpers -----------------------------------------------------

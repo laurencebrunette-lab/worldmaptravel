@@ -1,8 +1,8 @@
 # World Travel Cost Map
 
 An interactive world map for planning multi-city trips. Click cities on the
-map (or search for them), and the app estimates plane / train / bus / taxi
-costs between each stop, adding them into a running trip total.
+map (or search for them), and the app estimates plane / train / bus / taxi /
+ferry costs (in €) between each stop, adding them into a running trip total.
 
 ## How it works
 
@@ -17,7 +17,10 @@ costs between each stop, adding them into a running trip total.
 - Each leg between two consecutive cities lets you pick which mode of
   transport to count toward the trip total (the cheapest available mode is
   selected by default). A mode is only offered if the distance is within a
-  plausible range for it (e.g. no taxi across 3,000 km).
+  plausible range for it (e.g. no taxi across 3,000 km). Ferry is offered by
+  distance too, same as the other modes — there's no data on which specific
+  city pairs actually have a water crossing, so pick it manually when you
+  know a route is a ferry route (e.g. island hops).
 - **Countries are color-coded** with a vendored Natural Earth boundary
   dataset, and both **countries and major cities show a bilingual label**
   (English on top, local-language name below). Labels stay hidden by
@@ -56,7 +59,7 @@ js/app.js              # map setup, trip state, rendering
 data/countries-topo.js  # Natural Earth country boundaries (via world-atlas)
 data/countryNames.js    # English/native country names + colors (via world-countries)
 data/cities.js          # curated list of ~150 major cities, English + native names
-vendor/                # vendored Leaflet + topojson-client (no CDN dependency)
+vendor/                # vendored Leaflet + topojson-client + fonts (no CDN dependency)
 ```
 
 ### Data sources & attribution
@@ -69,6 +72,9 @@ vendor/                # vendored Leaflet + topojson-client (no CDN dependency)
   licensed under [ODbL](https://opendatacommons.org/licenses/odbl/) —
   attribution included here per that license.
 - City list: hand-curated for this project.
+- Fonts: [Quicksand](https://fonts.google.com/specimen/Quicksand) and
+  [Nunito](https://fonts.google.com/specimen/Nunito), both OFL-1.1 licensed,
+  vendored via `@fontsource`.
 
 ## Known limitations
 
@@ -79,7 +85,8 @@ vendor/                # vendored Leaflet + topojson-client (no CDN dependency)
 - Labels don't do collision avoidance, so in a few dense clusters (e.g.
   Western Europe, the Persian Gulf) a country and a city label can overlap
   slightly at low zoom. Zooming in or hovering resolves it.
-- The city list is a curated ~150 major hubs, not every city on Earth —
+- The city list is a curated ~200 major hubs (including secondary tourist
+  cities, not just capitals/largest cities), not every city on Earth —
   anywhere else can still be added by clicking the map directly or via the
   search box, which uses live geocoding instead.
 
@@ -88,5 +95,5 @@ vendor/                # vendored Leaflet + topojson-client (no CDN dependency)
 To swap in live pricing, replace the `setTimeout` estimation step in
 `addCity()` (`js/app.js`) with real API calls (flights via an Amadeus/
 Skyscanner API, ground transport via Rome2Rio or similar), keeping the same
-`{ distanceKm, costs: { plane, train, bus, taxi } }` shape so the rest of the
-UI keeps working unchanged.
+`{ distanceKm, costs: { plane, train, bus, taxi, ferry } }` shape so the rest
+of the UI keeps working unchanged.

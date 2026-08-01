@@ -6,7 +6,10 @@
  * plus a per-km rate). They're meant for ballpark trip-budgeting, not
  * booking. Feasibility cutoffs (e.g. no taxi across an ocean) are also
  * distance-based approximations and don't know about actual geography
- * (coastlines, borders, rail networks).
+ * (coastlines, borders, rail networks). Ferry is offered the same way —
+ * by distance only — since we have no data on which specific city pairs
+ * actually have a water crossing between them; pick it manually when you
+ * know a route is a ferry route (e.g. island hops).
  */
 
 const EARTH_RADIUS_KM = 6371;
@@ -64,6 +67,15 @@ const MODES = {
     maxKm: 200,
     baseFee: 6,
     perKm: 0.95,
+    tail: () => 0,
+  },
+  ferry: {
+    label: "Ferry",
+    icon: "⛴️",
+    minKm: 0,
+    maxKm: 700,
+    baseFee: 12,
+    perKm: 0.14,
     tail: () => 0,
   },
 };
